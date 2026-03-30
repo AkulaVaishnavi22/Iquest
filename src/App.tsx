@@ -11,7 +11,9 @@ import {
   Lock,
   CheckCircle2,
   AlertTriangle,
-  Send
+  Send,
+  MapPin,
+  FileText
 } from 'lucide-react';
 import { generateStages, evaluatePitch } from './services/ai';
 import { GameState, Stage } from './types';
@@ -149,7 +151,7 @@ export default function App() {
         <motion.div 
           initial={{ y: -100 }}
           animate={{ y: 0 }}
-          className="fixed top-20 left-0 right-0 z-40 p-4 bg-white/80 backdrop-blur-md border-b border-black/5"
+          className="fixed top-0 left-0 right-0 z-50 p-4 bg-white/95 backdrop-blur-xl border-b border-black/5 shadow-sm"
         >
           <div className="max-w-7xl mx-auto flex justify-center gap-12">
             <Metric icon={<Coins className="text-foreground w-4 h-4" />} label="Budget" value={`$${gameState.budget.toLocaleString()}`} />
@@ -159,7 +161,7 @@ export default function App() {
         </motion.div>
       )}
 
-      <main className={`${view === 'home' ? '' : 'pt-48 pb-20 px-4 max-w-5xl mx-auto'}`}>
+      <main className={`${view === 'home' ? '' : 'pt-32 pb-20 px-4 max-w-5xl mx-auto relative z-10'}`}>
         <AnimatePresence mode="wait">
           {view === 'home' && (
             <HomeView onStart={handleStart} loading={loading} />
@@ -582,17 +584,11 @@ function MapView({ gameState, onSelectStage }: { gameState: GameState, onSelectS
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="space-y-16"
+      className="space-y-16 pt-8"
     >
-      <div className="text-center space-y-4">
-        <h2 className="text-5xl font-serif tracking-tight">The Path to <span className="italic text-muted">Impact</span></h2>
-        <p className="text-muted max-w-lg mx-auto">Complete each stage to unlock the next challenge in your social innovation journey.</p>
-      </div>
-
-      <div className="relative max-w-3xl mx-auto">
-        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-black/5 -translate-x-1/2" />
-        
-        <div className="space-y-12 relative z-10">
+      <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
+        {/* Stages Timeline (Left Column) */}
+        <div className="md:col-span-2 space-y-10">
           {gameState.stages.map((stage, index) => {
             const isLocked = stage.id > gameState.currentStage;
             const isCompleted = stage.id < gameState.currentStage;
@@ -601,31 +597,109 @@ function MapView({ gameState, onSelectStage }: { gameState: GameState, onSelectS
             return (
               <motion.div 
                 key={stage.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 onClick={() => !isLocked && onSelectStage(stage)}
-                className={`
-                  glass-card p-8 flex items-center gap-8 cursor-pointer transition-all group relative
-                  ${isLocked ? 'opacity-40 grayscale cursor-not-allowed' : 'hover:border-foreground/20 hover:bg-black/[0.02]'}
-                  ${isCurrent ? 'border-foreground/30 shadow-xl shadow-black/5' : ''}
-                `}
+                className="flex items-start gap-6 relative group"
               >
+                {/* Timeline Line Connection */}
+                {index !== gameState.stages.length - 1 && (
+                  <div className="absolute left-8 top-20 bottom-[-2.5rem] w-px bg-black/10 z-0" />
+                )}
+
+                {/* Left Icon Node */}
                 <div className={`
-                  w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 font-serif text-2xl
-                  ${isCompleted ? 'bg-foreground text-white' : isCurrent ? 'bg-foreground text-white' : 'bg-black/5 text-muted'}
+                  w-16 h-16 rounded-3xl flex items-center justify-center shrink-0 shadow-sm relative z-10 transition-all
+                  ${isCurrent ? 'bg-[#00ff00] text-black shadow-[0_0_30px_rgba(0,255,0,0.3)]' : 
+                    isCompleted ? 'bg-foreground text-white' : 'bg-black/5 text-muted'}
                 `}>
-                  {isCompleted ? <CheckCircle2 className="w-6 h-6" /> : stage.id}
+                  {isCurrent ? <MapPin className="w-8 h-8" /> : isCompleted ? <CheckCircle2 className="w-8 h-8" /> : <Lock className="w-8 h-8" />}
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-serif text-2xl leading-tight">{stage.name}</h3>
-                  <p className="text-sm text-muted mt-1">{stage.objective}</p>
+
+                {/* Stage Layout Card */}
+                <div className={`
+                  glass-card p-8 flex flex-col items-start gap-3 transition-all relative w-full
+                  ${isLocked ? 'opacity-40 grayscale cursor-not-allowed' : 'hover:border-foreground/20 hover:shadow-lg cursor-pointer'} 
+                  ${isCurrent ? 'border-foreground/30 shadow-2xl shadow-black/5' : ''}
+                `}>
+                  {isCurrent && (
+                    <div className="absolute top-6 right-6 px-3 py-1 bg-[#00ff00] text-black text-[10px] font-bold tracking-widest uppercase rounded-sm z-10">
+                      Current
+                    </div>
+                  )}
+
+                  <div className="space-y-2 w-full pr-12">
+                    <span className={`text-[10px] uppercase tracking-widest font-bold ${isCurrent ? 'text-green-600' : 'text-muted'}`}>Stage {stage.id}</span>
+                    <h3 className="font-serif text-3xl leading-tight text-foreground">{stage.name}</h3>
+                    <p className="text-sm text-muted leading-relaxed mt-2">{stage.objective}</p>
+                  </div>
+                  
+                  {!isLocked && (
+                    <div className={`mt-4 text-xs font-bold uppercase tracking-widest flex items-center gap-2 ${isCurrent ? 'text-green-600' : 'text-foreground'}`}>
+                      {isCurrent ? 'Enter Stage' : 'Revisit Stage'} <ChevronRight className="w-4 h-4" />
+                    </div>
+                  )}
                 </div>
-                {isLocked ? <Lock className="w-5 h-5 text-muted/30" /> : <ChevronRight className="w-5 h-5 text-foreground group-hover:translate-x-1 transition-transform" />}
               </motion.div>
             );
           })}
+        </div>
+
+        {/* Info Sidebar (Right Column) */}
+        <div className="md:col-span-1 space-y-8">
+          <div className="sticky top-32 space-y-8">
+            {/* Market Pulse Card */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="glass-card p-8 space-y-8 bg-black/[0.02]"
+            >
+              <div className="flex items-center gap-3">
+                <Zap className="w-6 h-6 text-green-600" />
+                <h3 className="font-serif text-2xl tracking-tight">Market Pulse</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex justify-between items-center text-sm border-b border-black/5 pb-4">
+                  <span className="text-muted tracking-widest text-xs uppercase font-bold">Sentiment</span>
+                  <span className="font-bold text-green-600">Bullish</span>
+                </div>
+                <div className="flex justify-between items-center text-sm border-b border-black/5 pb-4">
+                  <span className="text-muted tracking-widest text-xs uppercase font-bold">Competition</span>
+                  <span className="font-bold text-red-500">Extreme</span>
+                </div>
+                <div className="flex justify-between items-center text-sm border-b border-black/5 pb-4">
+                  <span className="text-muted tracking-widest text-xs uppercase font-bold">Regulation</span>
+                  <span className="font-bold text-blue-500">Neutral</span>
+                </div>
+              </div>
+
+              <div className="bg-foreground text-white p-6 rounded-2xl relative overflow-hidden shadow-inner">
+                <div className="flex items-center gap-2 text-white/50 text-[10px] uppercase tracking-widest mb-3 font-bold">
+                  <FileText className="w-3 h-3" /> Latest News
+                </div>
+                <p className="font-serif italic leading-relaxed text-sm">
+                  "Industry leaders note a massive shift toward specialized early-stage tools and gamified interfaces."
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Current Focus Card */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="glass-card p-8 space-y-4"
+            >
+              <h3 className="font-serif text-2xl tracking-tight">Current Focus</h3>
+              <p className="text-muted text-sm leading-relaxed">
+                You are currently at <strong className="text-foreground">{gameState.stages[gameState.currentStage - 1]?.name || 'the end'}</strong>. 
+                Your goal is to {(gameState.stages[gameState.currentStage - 1]?.objective || 'complete the journey').toLowerCase()}.
+              </p>
+            </motion.div>
+          </div>
         </div>
       </div>
     </motion.div>
