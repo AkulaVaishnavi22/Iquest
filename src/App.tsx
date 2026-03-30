@@ -402,7 +402,7 @@ function HomeView({ onStart, loading }: { onStart: (idea: string, budget: string
             className="relative aspect-square rounded-3xl overflow-hidden shadow-2xl"
           >
             <img 
-              src="https://picsum.photos/seed/innovation/800/800" 
+              src="/assets/illustration_about_1774873362114.png" 
               alt="Social Innovation" 
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
@@ -421,13 +421,13 @@ function HomeView({ onStart, loading }: { onStart: (idea: string, budget: string
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { title: "Problem Discovery", desc: "Identify deep-rooted social challenges.", img: "discovery" },
-              { title: "Stakeholder Mapping", desc: "Engage with NGOs and governments.", img: "network" },
-              { title: "Solution Design", desc: "Build sustainable, scalable models.", img: "design" },
-              { title: "Impact Metrics", desc: "Define how success is measured.", img: "metrics" },
-              { title: "Resource Allocation", desc: "Manage limited budgets effectively.", img: "finance" },
-              { title: "Crisis Management", desc: "Navigate unexpected roadblocks.", img: "crisis" },
-              { title: "The Pitch", desc: "Present your vision to investors.", img: "pitch" }
+              { title: "Problem Discovery", desc: "Identify deep-rooted social challenges.", img: "/assets/illustration_phase1_1774873396448.png" },
+              { title: "Stakeholder Mapping", desc: "Engage with NGOs and governments.", img: "/assets/illustration_phase2_1774873425311.png" },
+              { title: "Solution Design", desc: "Build sustainable, scalable models.", img: "/assets/illustration_phase3_1774873444185.png" },
+              { title: "Impact Metrics", desc: "Define how success is measured.", img: "/assets/illustration_phase4_1774873462469.png" },
+              { title: "Resource Allocation", desc: "Manage limited budgets effectively.", img: "/assets/illustration_phase5_1774873491500.png" },
+              { title: "Crisis Management", desc: "Navigate unexpected roadblocks.", img: "/assets/illustration_phase6_1774873513812.png" },
+              { title: "The Pitch", desc: "Present your vision to investors.", img: "/assets/illustration_phase7_1774873530922.png" }
             ].map((phase, i) => (
               <motion.div 
                 key={i}
@@ -439,7 +439,7 @@ function HomeView({ onStart, loading }: { onStart: (idea: string, budget: string
               >
                 <div className="aspect-video rounded-xl overflow-hidden bg-black/5">
                   <img 
-                    src={`https://picsum.photos/seed/${phase.img}/400/225`} 
+                    src={phase.img} 
                     alt={phase.title} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     referrerPolicy="no-referrer"
@@ -516,7 +516,7 @@ function HomeView({ onStart, loading }: { onStart: (idea: string, budget: string
             className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl order-2 md:order-1"
           >
             <img 
-              src="https://picsum.photos/seed/impact/1200/675" 
+              src="/assets/illustration_impact_1774873380573.png" 
               alt="Social Impact" 
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
